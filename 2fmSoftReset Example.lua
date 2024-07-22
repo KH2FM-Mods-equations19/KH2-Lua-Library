@@ -1,4 +1,5 @@
 local kh2lib = require("kh2lib")
+kh2lib.requireLibraryVersion(1)
 
 local canExecute = kh2lib.canExecute
 local Input = kh2lib.Input

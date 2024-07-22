@@ -3,6 +3,7 @@ LUAGUI_AUTH = "Alios"
 LUAGUI_DESC = "An example Lua script for learning how to use the KH2 Lua Library"
 
 local kh2lib = require("kh2lib") -- Detects game version and populates the kh2lib table
+kh2lib.requireLibraryVersion(1) -- Declares the minimum version of the library required by this script
 
 -- Local slots for things we want to use frequently
 -- TODO: Maybe premature optimization, but for something done on every frame could be warranted?
