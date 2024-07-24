@@ -1,0 +1,32 @@
+title: KH2 Lua Library Test v1
+originalAuthor: Alios/equations19
+description: Test implementation of the Lua library. Place at the top to use the testing versions of scripts.
+assets:
+- name: scripts/F266B00B GoA ROM.lua
+  method: copy
+  source:
+  - name: F266B00B GoA ROM Example.lua
+- name: scripts/2fmSoftReset.lua
+  method: copy
+  source:
+  - name: 2fmSoftReset Example.lua
+- name: scripts/io_packages/kh2lib.lua
+  method: copy
+  source:
+  - name: io_packages/kh2lib.lua
+- name: scripts/io_packages/KH2Emulator.lua
+  method: copy
+  source:
+  - name: io_packages/KH2Emulator.lua
+- name: scripts/io_packages/KH2EpicGlobal.lua
+  method: copy
+  source:
+  - name: io_packages/KH2EpicGlobal.lua
+- name: scripts/io_packages/KH2SteamGlobal.lua
+  method: copy
+  source:
+  - name: io_packages/KH2SteamGlobal.lua
+- name: scripts/io_packages/KH2SteamJP.lua
+  method: copy
+  source:
+  - name: io_packages/KH2SteamJP.lua
