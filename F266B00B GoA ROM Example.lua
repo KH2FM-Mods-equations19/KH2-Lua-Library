@@ -47,16 +47,13 @@ local CanExecute = kh2lib.canExecute
 local OnPC = kh2lib.onPC
 local GoAOffset = 0x7C
 local SeedCleared = false
+local StaticPointersLoaded = false
 local Obj0, Sys3, Btl0, Menu2
 
 function _OnInit()
     kh2lib.print("GoA v1.54.1 (Library Testing Edition)")
 
     if CanExecute then
-        Obj0 = ReadInt(Obj0Pointer)
-        Sys3 = ReadInt(Sys3Pointer)
-        Btl0 = ReadInt(Btl0Pointer)
-
         --[[Slot2  = Slot1 - NextSlot
         Slot3  = Slot2 - NextSlot
         Slot4  = Slot3 - NextSlot
@@ -160,6 +157,14 @@ if not CanExecute then
     return
 end
 
+-- Note: Loading these pointers in _OnInit is too early
+if not StaticPointersLoaded then
+    Obj0 = kh2lib.readPointer(Obj0Pointer)
+    Sys3 = kh2lib.readPointer(Sys3Pointer)
+    Btl0 = kh2lib.readPointer(Btl0Pointer)
+    StaticPointersLoaded = true
+end
+
 if true then --Define current values for common addresses
 	World  = ReadByte(Now+0x00)
 	Room   = ReadByte(Now+0x01)
@@ -169,11 +174,7 @@ if true then --Define current values for common addresses
 	Btl    = ReadShort(Now+0x06)
 	Evt    = ReadShort(Now+0x08)
 	PrevPlace = ReadShort(Now+0x30)
-	if not OnPC then
-		ARD = ReadInt(ARDPointer)
-	else
-		ARD = ReadLong(ARDPointer)
-	end
+    ARD = kh2lib.readPointer(ARDPointer)
 end
 NewGame()
 GoA()

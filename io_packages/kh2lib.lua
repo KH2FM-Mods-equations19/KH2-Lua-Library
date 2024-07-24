@@ -22,6 +22,15 @@ local function requireLibraryVersion(requiredVersion)
     end
 end
 
+-- Reads and returns the pointer value at the given address.
+local function readPointer(address)
+    if kh2lib.onPC then
+        return ReadLong(address)
+    else
+        return ReadInt(address)
+    end
+end
+
 local function checkVersion()
     -- Addresses and values used internally to check which version of the game is running
     local EpicGlobalAddress = 0x566A8E
@@ -71,9 +80,10 @@ local function checkVersion()
     kh2lib.gameVersion = gameVersion
     kh2lib.onPC = onPC
     kh2lib.canExecute = gameVersion ~= KH2_VERSION_UNKNOWN
-     -- We can export other things like functions, if we have additional common ones that we can ship
+
     kh2lib.print = printFunction
     kh2lib.requireLibraryVersion = requireLibraryVersion
+    kh2lib.readPointer = readPointer
 
     return kh2lib
 end
