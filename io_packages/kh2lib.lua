@@ -18,7 +18,7 @@ local kh2lib = {}
 local function requireLibraryVersion(requiredVersion)
     if KH2_LIBRARY_VERSION < requiredVersion then
         kh2lib.print("*** This script requires KH2 Lua Library version " .. requiredVersion .. " and may not function properly!")
-        kh2lib["canExecute"] = false
+        kh2lib.canExecute = false
     end
 end
 
@@ -32,6 +32,7 @@ local function checkVersion()
     local SteamJPValue = 0xFF
 
     local gameVersion = KH2_VERSION_UNKNOWN
+    local onPC = false
     local printFunction = print
     local vars = {}
 
@@ -44,16 +45,19 @@ local function checkVersion()
     elseif GAME_ID == 0x431219CC and ENGINE_TYPE == "BACKEND" then -- PC
         if ReadByte(EpicGlobalAddress) == EpicGlobalValue then -- EGS Global
             gameVersion = KH2_VERSION_EPIC
+            onPC = true
             printFunction = ConsolePrint -- (ConsolePrint is not compatible with emulator so only use when on PC versions)
             kh2lib = require("KH2EpicGlobal")
             printFunction(baseVersionMessage .. "Detected Epic Global version")
         elseif ReadByte(SteamGlobalAddress) == SteamGlobalValue then -- Steam Global
             gameVersion = KH2_VERSION_STEAM_GLOBAL
+            onPC = true
             printFunction = ConsolePrint
             kh2lib = require("KH2SteamGlobal")
             printFunction(baseVersionMessage .. "Detected Steam Global version")
         elseif ReadByte(SteamJPAddress) == SteamJPValue then -- Steam JP
             gameVersion = KH2_VERSION_STEAM_JP
+            onPC = true
             printFunction = ConsolePrint
             kh2lib = require("KH2SteamJP")
             printFunction(baseVersionMessage .. "Detected Steam JP version")
@@ -64,11 +68,12 @@ local function checkVersion()
         printFunction(baseVersionMessage .. "KH2 not detected")
     end
 
-    kh2lib["gameVersion"] = gameVersion
-    kh2lib["canExecute"] = gameVersion ~= KH2_VERSION_UNKNOWN
+    kh2lib.gameVersion = gameVersion
+    kh2lib.onPC = onPC
+    kh2lib.canExecute = gameVersion ~= KH2_VERSION_UNKNOWN
      -- We can export other things like functions, if we have additional common ones that we can ship
-    kh2lib["print"] = printFunction
-    kh2lib["requireLibraryVersion"] = requireLibraryVersion
+    kh2lib.print = printFunction
+    kh2lib.requireLibraryVersion = requireLibraryVersion
 
     return kh2lib
 end

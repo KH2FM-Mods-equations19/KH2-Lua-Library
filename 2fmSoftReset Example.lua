@@ -8,7 +8,7 @@ local RNG = kh2lib.RNG
 local Spawns = kh2lib.Spawns
 
 function _OnInit()
-    kh2lib.print("KH2 Soft Reset")
+    kh2lib.print("KH2 Soft Reset 2.0.0 (Library Testing Edition)")
 end
 
 function _OnFrame()
