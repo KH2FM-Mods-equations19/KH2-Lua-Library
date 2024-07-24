@@ -41,6 +41,12 @@ return	{
     SoftReset = 0xABABDA - offset,
     RNG = 0x7535C0 - offset,
     Spawns = 0x2AE5CF8 - offset,
+    Continue = 0x29FB500 - offset,
+    SaveSelect = 0x2617460 - offset,
+    SveAddr = 0x9BA8B0 - offset, -- TODO: No idea how this is different from just Sve
+    LoadingIndicator = 0x8EC540 - offset,
+    LoadMenu = 0x7435D0 - offset,
+    WriteLogic = 0x7134A0 - offset,
 	-- Inventory Items (Byte)---------Value = "Save" + Offset---------------------
 	Potion = saveRef + 0x3580,
 	HiPotion = saveRef + 0x3581,

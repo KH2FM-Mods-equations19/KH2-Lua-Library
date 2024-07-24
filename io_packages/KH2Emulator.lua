@@ -37,11 +37,17 @@ return	{
 	NextMenu = 0x4,
 	MSN = 0x04FA440,
 
-	-- TODO: Do we need values for these? They're used in soft reset on PC.
+	-- TODO: Do we need values for these? They're used in soft reset and auto save on PC.
     -- Input = ?,
     -- SoftReset = ?,
     -- RNG = ?,
     -- Spawns = ?,
+    -- Continue = ?,
+    -- SaveSelect = ?,
+    -- SveAddr = ?,
+    -- LoadingIndicator = ?,
+    -- LoadMenu = ?,
+    -- WriteLogic = ?,
 
 	-- Inventory Items (Byte)---------Value = "Save" + Offset---------------------
 	Potion = saveRef + 0x3580,

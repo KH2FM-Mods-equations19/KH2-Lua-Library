@@ -6,6 +6,10 @@ assets:
   method: copy
   source:
   - name: F266B00B GoA ROM Example.lua
+- name: scripts/2fmAutosave.lua
+  method: copy
+  source:
+  - name: 2fmAutosave Example.lua
 - name: scripts/2fmSoftReset.lua
   method: copy
   source:

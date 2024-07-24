@@ -22,6 +22,14 @@ local function requireLibraryVersion(requiredVersion)
     end
 end
 
+-- Scripts can call `requirePCVersion` which will set `canExecute` to false if not one of the PC ports.
+local function requirePCVersion()
+    if not kh2lib.onPC then
+        kh2lib.print("*** This script expects to run on one of the PC ports of the game and will not function on emulator!")
+        kh2lib.canExecute = false
+    end
+end
+
 -- Reads and returns the pointer value at the given address.
 local function readPointer(address)
     if kh2lib.onPC then
@@ -83,6 +91,7 @@ local function checkVersion()
 
     kh2lib.print = printFunction
     kh2lib.requireLibraryVersion = requireLibraryVersion
+    kh2lib.requirePCVersion = requirePCVersion
     kh2lib.readPointer = readPointer
 
     return kh2lib
