@@ -1,0 +1,3 @@
+# Offset class
+
+WIP

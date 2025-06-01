@@ -1,10 +1,13 @@
+-- TODO: Document each property and in what version they were added
+-- in the /docs/reference files, then delete this file
+
 local function _ShowAllItemsInShops()
 
 end
 
 return {
     -- User-friendly name of the game version
-    GameVersionString = "",
+    GameVersionString = '',
 
     -- Lua Library Version 1 ----------------------------------------------------------------
 
@@ -97,21 +100,21 @@ return {
     DemCln = 0x0000000,
 
     -- Unit Slot 1
-    Slot1    = 0x0000000,
+    Slot1 = 0x0000000,
 
     NextSlot = 0x0000000,
 
     -- Hunny Slider HP (probably used by other minigames?)
-    Point1   = 0x0000000,
+    Point1 = 0x0000000,
 
     NxtPoint = 0x0000000,
 
-    Gauge1   = 0x0000000,
+    Gauge1 = 0x0000000,
 
     NxtGauge = 0x0000000,
 
     -- Menu 1 (main command menu)
-    Menu1    = 0x0000000,
+    Menu1 = 0x0000000,
 
     NextMenu = 0x0000000,
 
@@ -155,5 +158,12 @@ return {
     ShowAllItemsInShopsFunction = _ShowAllItemsInShops,
 
     -- Lua Library Version 3 ----------------------------------------------------------------
+
+    -- See /docs/reference/constants/README.md
+    _constants = {},
+    worlds = {},
+    rooms = {},
+    events = {},
+    current = {},
 
 }

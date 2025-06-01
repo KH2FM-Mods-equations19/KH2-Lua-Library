@@ -1,153 +1,158 @@
+-- Creates a string reference to the current directory, which is needed for relative imports
+local BASE_PATH = (...):match('(.-)[^%.]+$')
+
 -- Constants
-local offsets = require('kh2lib.constants.offsets')
-local worlds = require('kh2lib.constants.worlds')
-local rooms = require('kh2lib.constants.rooms')
-local events = require('kh2lib.constants.events')
+
+local OFFSETS = require(BASE_PATH .. 'constants.offsets')
+--- @module 'constants.worlds'
+local WORLDS = require(BASE_PATH .. 'constants.worlds')
+--- @module 'constants.rooms'
+local ROOMS = require(BASE_PATH .. 'constants.rooms')
+--- @module 'constants.events'
+local EVENTS = require(BASE_PATH .. 'constants.events')
 
 --- @alias WorldId integer
 --- @alias WorldName string
 --- @alias RoomId integer
+--- @alias RoomName string
+--- @alias EventId integer
+--- @alias EventName string
 
---- Lookup table for worlds (ID <--> Name)
---- @type {[WorldId]: WorldName}|{[WorldName]: WorldId}
-local lut_worlds = {}
-for _, world in ipairs(worlds) do
-    local id = world.id
-    local name = world.name
-    local short_name = world.short_name
-    local key_name = name:gsub(' ', '_'):upper()
-
-    lut_worlds[id] = name
-    lut_worlds[key_name] = id
-    lut_worlds[short_name] = id
+--- Convert string to valid key name in UPPER_SNAKE_CASE
+--- @param str string
+--- @return string
+local function upper_snake_case(str)
+    return str:gsub(' ', '_'):gsub("'", ''):upper()
 end
 
--- Add world aliases
-lut_worlds.SIMULATED_TWILIGHT_TOWN = lut_worlds.TWILIGHT_TOWN
-lut_worlds.STT = lut_worlds.SIMULATED_TWILIGHT_TOWN
-lut_worlds.RADIANT_GARDEN = lut_worlds.HOLLOW_BASTION
-lut_worlds.RG = lut_worlds.RADIANT_GARDEN
-lut_worlds.LAND_OF_DRAGONS = lut_worlds.THE_LAND_OF_DRAGONS
-lut_worlds.LOD = lut_worlds.LAND_OF_DRAGONS
-lut_worlds.HUNDRED_ACRE_WOOD = lut_worlds['100 Acre Wood']
-lut_worlds.HAW = lut_worlds.HUNDRED_ACRE_WOOD
-lut_worlds.ATL = lut_worlds.ATLANTICA
-lut_worlds.WORLD_THAT_NEVER_WAS = lut_worlds.THE_WORLD_THAT_NEVER_WAS
-lut_worlds.WTNW = lut_worlds.WORLD_THAT_NEVER_WAS
+--- Create lookup table for worlds to convert between IDs and names (bi-directional)
+--- @return {[WorldId]: WorldName}|{[WorldName]: WorldId}
+local function create_worlds_lut()
+    local lut = {}
+    for _, world in ipairs(WORLDS) do
+        local id = world.id
+        local name = world.name
+        local short_name = world.short_name
+        local key_name = upper_snake_case(name)
 
--- Create lookup table for rooms (ID <--> Name)
---- @type {[WorldId|WorldName]: {[RoomId]: string}}|{[WorldId|WorldName]: {[string]: RoomId}}
-local lut_rooms = {}
-for world_name, rooms_array in pairs(rooms) do
-    lut_rooms[world_name] = {}
+        lut[id] = name
+        lut[key_name] = id
+        lut[short_name] = id
+    end
 
-    for _, room in ipairs(rooms_array) do
+    return lut
+end
+
+--- Create lookup table for rooms to convert between IDs and names (bi-directional)
+--- @return {[WorldId|WorldName]: {[RoomId]: RoomName}}|{[WorldId|WorldName]: {[RoomName]: RoomId}}
+local function create_rooms_lut()
+    local lut = {}
+    for _, room in ipairs(ROOMS) do
+        local world = WORLDS[room.world_id]
+        local world_id = world.id
+        local world_name = upper_snake_case(world.name)
+        local world_abbr = world.short_name
         local id = room.id
         local name = room.name
 
-        lut_rooms[world_name][id] = name
-        lut_rooms[world_name][name] = id
-
-        if not lut_rooms[room.world_id] then
-            lut_rooms[room.world_id] = {}
+        if not lut[world_id] then
+            lut[world_id] = {}
+            lut[world_name] = {}
+            lut[world_abbr] = {}
         end
-        lut_rooms[room.world_id][id] = name
-        lut_rooms[room.world_id][name] = id
+
+        lut[world_id][id] = name
+        lut[world_id][name] = id
+        lut[world_name][id] = name
+        lut[world_name][name] = id
+        lut[world_abbr][id] = name
+        lut[world_abbr][name] = id
     end
+
+    return lut
 end
 
--- Add world aliases
-lut_rooms.WOD = lut_rooms.WORLD_OF_DARKNESS
-lut_rooms.TT = lut_rooms.TWILIGHT_TOWN
-lut_rooms.SIMULATED_TWILIGHT_TOWN = lut_rooms.TWILIGHT_TOWN
-lut_rooms.STT = lut_rooms.SIMULATED_TWILIGHT_TOWN
-lut_rooms.DI = lut_rooms.DESTINY_ISLANDS
-lut_rooms.HB = lut_rooms.HOLLOW_BASTION
-lut_rooms.RADIANT_GARDEN = lut_rooms.HOLLOW_BASTION
-lut_rooms.RG = lut_rooms.RADIANT_GARDEN
-lut_rooms.BC = lut_rooms.BEASTS_CASTLE
-lut_rooms.OC = lut_rooms.OLYMPUS_COLISEUM
-lut_rooms.AG = lut_rooms.AGRABAH
-lut_rooms.TLOD = lut_rooms.THE_LAND_OF_DRAGONS
-lut_rooms.LAND_OF_DRAGONS = lut_rooms.THE_LAND_OF_DRAGONS
-lut_rooms.LOD = lut_rooms.LAND_OF_DRAGONS
-lut_rooms.HAW = lut_rooms.HUNDRED_ACRE_WOOD
-lut_rooms['100_ACRE_WOOD'] = lut_rooms.HUNDRED_ACRE_WOOD
-lut_rooms['1AW'] = lut_rooms.HUNDRED_ACRE_WOOD
-lut_rooms.PL = lut_rooms.PRIDE_LANDS
-lut_rooms.AT = lut_rooms.ATLANTICA
-lut_rooms.ATL = lut_rooms.ATLANTICA
-lut_rooms.DC = lut_rooms.DISNEY_CASTLE
-lut_rooms.TR = lut_rooms.TIMELESS_RIVER
-lut_rooms.HT = lut_rooms.HALLOWEEN_TOWN
-lut_rooms.PR = lut_rooms.PORT_ROYAL
-lut_rooms.SP = lut_rooms.SPACE_PARANOIDS
-lut_rooms.TWTNW = lut_rooms.THE_WORLD_THAT_NEVER_WAS
-lut_rooms.WORLD_THAT_NEVER_WAS = lut_rooms.THE_WORLD_THAT_NEVER_WAS
-lut_rooms.WTNW = lut_rooms.WORLD_THAT_NEVER_WAS
-
--- Create lookup table for events (ID -> Name)
--- Bidirectional search can be added later if deemed useful
---- @type {[WorldId|WorldName]: {[RoomId]: {[integer]: string}}}
-local lut_events = {}
-for world_name, events_array in pairs(events) do
-    lut_events[world_name] = {}
-
-    for _, event in ipairs(events_array) do
-        local id = event.id
+--- Create lookup table for events to get names from IDs (uni-directional)
+--- @return {[WorldId|WorldName]: {[RoomId]: {[EventId]: EventName}}}
+local function create_events_lut()
+    local lut = {}
+    for _, event in ipairs(EVENTS) do
+        local world = WORLDS[event.world_id]
+        local world_id = world.id
+        local world_name = upper_snake_case(world.name)
+        local world_abbr = world.short_name
         local room = event.room_id
-        local world_id = event.world_id
+        local id = event.id
         local name = event.name
 
-        if not lut_events[world_id] then lut_events[world_id] = {} end
-        if not lut_events[world_name][room] then lut_events[world_name][room] = {} end
-        if not lut_events[world_id][room] then lut_events[world_id][room] = {} end
+        if not lut[world_id] then
+            lut[world_id] = {}
+            lut[world_name] = {}
+            lut[world_abbr] = {}
+        end
 
-        lut_events[world_name][room][id] = name
-        lut_events[world_id][room][id] = name
+        if not lut[world_id][room] then
+            lut[world_id][room] = {}
+            lut[world_name][room] = {}
+            lut[world_abbr][room] = {}
+        end
+
+        lut[world_id][room][id] = name
+        lut[world_name][room][id] = name
+        lut[world_abbr][room][id] = name
     end
+
+    return lut
 end
 
--- Add world aliases
-lut_events.WOD = lut_events.WORLD_OF_DARKNESS
-lut_events.TT = lut_events.TWILIGHT_TOWN
-lut_events.SIMULATED_TWILIGHT_TOWN = lut_events.TWILIGHT_TOWN
-lut_events.STT = lut_events.SIMULATED_TWILIGHT_TOWN
-lut_events.DI = lut_events.DESTINY_ISLANDS
-lut_events.HB = lut_events.HOLLOW_BASTION
-lut_events.RADIANT_GARDEN = lut_events.HOLLOW_BASTION
-lut_events.RG = lut_events.RADIANT_GARDEN
-lut_events.BC = lut_events.BEASTS_CASTLE
-lut_events.OC = lut_events.OLYMPUS_COLISEUM
-lut_events.AG = lut_events.AGRABAH
-lut_events.TLOD = lut_events.THE_LAND_OF_DRAGONS
-lut_events.LAND_OF_DRAGONS = lut_events.THE_LAND_OF_DRAGONS
-lut_events.LOD = lut_events.LAND_OF_DRAGONS
-lut_events.HAW = lut_events.HUNDRED_ACRE_WOOD
-lut_events['100_ACRE_WOOD'] = lut_events.HUNDRED_ACRE_WOOD
-lut_events['1AW'] = lut_events.HUNDRED_ACRE_WOOD
-lut_events.PL = lut_events.PRIDE_LANDS
-lut_events.AT = lut_events.ATLANTICA
-lut_events.ATL = lut_events.ATLANTICA
-lut_events.DC = lut_events.DISNEY_CASTLE
-lut_events.TR = lut_events.TIMELESS_RIVER
-lut_events.HT = lut_events.HALLOWEEN_TOWN
-lut_events.PR = lut_events.PORT_ROYAL
-lut_events.SP = lut_events.SPACE_PARANOIDS
-lut_events.TWTNW = lut_events.THE_WORLD_THAT_NEVER_WAS
-lut_events.WORLD_THAT_NEVER_WAS = lut_events.THE_WORLD_THAT_NEVER_WAS
-lut_events.WTNW = lut_events.WORLD_THAT_NEVER_WAS
+--- Add some additional world aliases to a lookup table
+--- @param table table Table keys for each world
+local function add_world_aliases_to_table(table)
+    table.SIMULATED_TWILIGHT_TOWN = table.TWILIGHT_TOWN
+    table.STT = table.SIMULATED_TWILIGHT_TOWN
+    table.RADIANT_GARDEN = table.HOLLOW_BASTION
+    table.RG = table.RADIANT_GARDEN
+    table.LAND_OF_DRAGONS = table.THE_LAND_OF_DRAGONS
+    table.LOD = table.LAND_OF_DRAGONS
+    table.HUNDRED_ACRE_WOOD = table['100_ACRE_WOOD']
+    table.HAW = table.HUNDRED_ACRE_WOOD
+    table.ATL = table.ATLANTICA
+    table.WORLD_THAT_NEVER_WAS = table.THE_WORLD_THAT_NEVER_WAS
+    table.WTNW = table.WORLD_THAT_NEVER_WAS
+end
 
+local lut_worlds = create_worlds_lut()
+add_world_aliases_to_table(lut_worlds)
+
+local lut_rooms = create_rooms_lut()
+add_world_aliases_to_table(lut_rooms)
+
+local lut_events = create_events_lut()
+add_world_aliases_to_table(lut_events)
 
 return {
-    offsets = offsets,
+    --- Lookup table for converting between world IDs and names
+    --- @class WorldsLUT
+    --- @field [WorldId] WorldName
+    --- @field [WorldName] WorldId
     worlds = lut_worlds,
+
+    --- Lookup table for converting between room IDs and names
+    --- @class RoomsLUT
+    --- @field [WorldId] {[RoomId]: RoomName}|{[RoomName]: RoomId}
+    --- @field [WorldName] {[RoomId]: RoomName}|{[RoomName]: RoomId}
     rooms = lut_rooms,
+
+    --- Lookup table for converting event IDs to names
+    --- @class EventsLUT
+    --- @field [WorldId] {[RoomId]: {[EventId]: EventName}}
+    --- @field [WorldName] {[RoomId]: {[EventId]: EventName}}
     events = lut_events,
-    constants = {
-        offsets = offsets,
-        worlds = worlds,
-        rooms = rooms,
-        events = events,
+
+    _constants = {
+        _offsets = OFFSETS,
+        worlds = WORLDS,
+        rooms = ROOMS,
+        events = EVENTS,
     },
 }

@@ -9,7 +9,7 @@ assets:
   - name: io_packages/kh2lib.lua
 
 # Helper script that verifies the library is working correctly
-- name: scripts/00-LuaLibrary.lua
+- name: scripts/F266B00B LuaLibrary.lua
   method: copy
   source:
   - name: LuaLibrary.lua

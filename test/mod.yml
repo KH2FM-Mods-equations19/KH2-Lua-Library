@@ -1,8 +1,0 @@
-title: KH2 Lua Library Constants Test Suite (1.0.0)
-originalAuthor: JHobz
-description: Test module for KH2 Lua Library constant tables
-assets:
-- name: scripts/LuaLibrary-Test.lua
-  method: copy
-  source:
-  - name: constants.test.lua

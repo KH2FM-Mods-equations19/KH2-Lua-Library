@@ -1,4 +1,7 @@
 # see https://github.com/CppCXY/EmmyLuaCodeStyle
+[*.md]
+max_line_length = 120
+
 [*.lua]
 # [basic]
 

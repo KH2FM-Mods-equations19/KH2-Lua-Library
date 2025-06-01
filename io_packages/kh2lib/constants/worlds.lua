@@ -1,13 +1,13 @@
-local KH2ValueConstant = require('kh2lib.constants.base_class')
+-- Creates a string reference to the current directory, which is needed for relative imports
+local BASE_PATH = (...):match('(.-)[^%.]+$')
+local KH2ValueConstant = require(BASE_PATH .. 'base_class')
 
 --- KH2 World
 --- @class World:KH2ValueConstant
 --- @field id integer # 1-byte world ID (from game)
 --- @field name string # human-readable name of world
 --- @field short_name string # abbreviated name of world
--- local World = {}
 local World = KH2ValueConstant:new{ id = -1, name = 'UNKNOWN_WORLD', short_name = 'UNKWN' }
--- setmetatable(World, getmetatable(KH2ValueConstant))
 
 --- @param o {id: integer, name: string, short_name: string} # options table
 --- @return World # newly instantiated World

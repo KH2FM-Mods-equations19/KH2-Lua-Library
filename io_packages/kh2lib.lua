@@ -25,11 +25,18 @@ KH2_VERSION_EPIC_1_0_0_10 = 0x020A
 -- Steam 1.0.0.10
 KH2_VERSION_STEAM_1_0_0_10 = 0x030A
 
--- @module kh2lib
+--- KH2 Lua Library (KH2Lib)
+--- @class (exact) KH2Lib:LegacyKH2Lib
+--- @field worlds WorldsLUT
+--- @field rooms RoomsLUT
+--- @field events EventsLUT
+--- @field current table
+--- @field private _constants table
 local kh2lib = {}
 
--- Scripts can call `RequireKH2LibraryVersion` to declare a minimum version of the library they expect.
--- If the actual version is too low, `CanExecute` will be set to false and a message is printed to the console.
+--- Scripts can call `RequireKH2LibraryVersion` to declare a minimum version of the library they expect.
+--- If the actual version is too low, `CanExecute` will be set to false and a message is printed to the console.
+--- @param version integer required version
 function RequireKH2LibraryVersion(version)
     if KH2_LIBRARY_VERSION < version then
         local reqStr = tostring(version)
@@ -39,8 +46,8 @@ function RequireKH2LibraryVersion(version)
     end
 end
 
--- Scripts can call `RequirePCGameVersion` to declare that the script expects to run on PC ports only.
--- If not on a PC port, `CanExecute` will be set to false and a message is printed to the console.
+--- Scripts can call `RequirePCGameVersion` to declare that the script expects to run on PC ports only.
+--- If not on a PC port, `CanExecute` will be set to false and a message is printed to the console.
 function RequirePCGameVersion()
     if not kh2lib.OnPC then
         LogError('This script expects to run on one of the PC ports of the game and will not execute.')
@@ -48,9 +55,10 @@ function RequirePCGameVersion()
     end
 end
 
--- Scripts can call `DenyGameVersions` to declare specific game version(s) that are known to not be compatible with the
--- script, perhaps due to not being able to find memory addresses for older game versions.
--- If the detected version is one of those, `CanExecute` will be set to false and a message is printed to the console.
+--- Scripts can call `DenyGameVersions` to declare specific game version(s) that are known to not be compatible with the
+--- script, perhaps due to not being able to find memory addresses for older game versions.
+--- If the detected version is one of those, `CanExecute` will be set to false and a message is printed to the console.
+--- @param ... table list of required versions, as additional arguments
 function DenyGameVersions(...)
     local arg = { ... }
     for _, version in pairs(arg) do
@@ -62,19 +70,24 @@ function DenyGameVersions(...)
     end
 end
 
--- Performs a bitwise `OR` of the value at a specified address using a specified mask and writes the updated byte.
--- This is usually used to set one or more bits in a byte to `1`.
+--- Performs a bitwise `OR` of the value at a specified address using a specified mask and writes the updated byte.
+--- This is usually used to set one or more bits in a byte to `1`.
+--- @param address number
+--- @param mask number
 function BitOr(address, mask)
     WriteByte(address, ReadByte(address) | mask)
 end
 
--- Performs a bitwise `AND NOT` of the value at a specified address using a specified mask and writes the updated byte.
--- This is usually used to set one or more bits in a byte to `0`.
+--- Performs a bitwise `AND NOT` of the value at a specified address using a specified mask and writes the updated byte.
+--- This is usually used to set one or more bits in a byte to `0`.
+--- @param address number
+--- @param mask number
 function BitNot(address, mask)
     WriteByte(address, ReadByte(address) & ~mask)
 end
 
--- Reads and returns the pointer value at the given address.
+--- Reads and returns the pointer value at the given address.
+--- @param address number
 function ReadPointer(address)
     if kh2lib.OnPC then
         return ReadLong(address)
@@ -83,31 +96,34 @@ function ReadPointer(address)
     end
 end
 
--- Logs a message to the console, using an appropriate call per platform.
+--- Logs a message to the console
+--- @param message any
 function Log(message)
-    if kh2lib.OnPC then
-        ConsolePrint(message)
-    else
-        print(message)
-    end
+    ConsolePrint(tostring(message))
 end
 
--- Logs a warning message to the console, using an appropriate call per platform.
+--- Logs a message to the console, with "MESSAGE: " prefix
+--- @param message any
+function LogMessage(message)
+    ConsolePrint(tostring(message), 0)
+end
+
+--- Logs a success message to the console
+--- @param message any
+function LogSuccess(message)
+    ConsolePrint(tostring(message), 1)
+end
+
+--- Logs a warning message to the console
+--- @param message any
 function LogWarning(message)
-    if kh2lib.OnPC then
-        ConsolePrint(message, 2)
-    else
-        print('WARNING: ' .. message)
-    end
+    ConsolePrint(tostring(message), 2)
 end
 
--- Logs an error message to the console, using an appropriate call per platform.
+--- Logs an error message to the console
+--- @param message any
 function LogError(message)
-    if kh2lib.OnPC then
-        ConsolePrint(message, 3)
-    else
-        print('ERROR: ' .. message)
-    end
+    ConsolePrint(tostring(message), 3)
 end
 
 --- @deprecated
@@ -432,8 +448,7 @@ local function add_lookup_tables()
         return
     end
 
-    kh2lib.constants = luts.constants
-    kh2lib.offsets = luts.offsets
+    kh2lib._constants = luts._constants
     kh2lib.worlds = luts.worlds
     kh2lib.rooms = luts.rooms
     kh2lib.events = luts.events
@@ -458,20 +473,31 @@ local function add_game_state_table()
     local mt = {
         --- Defines getters as syntactical sugar for member variables
         --- @param self GameState
-        --- @param key 'world'|'world_name'|'room'|'room_name'|'door'|'place'|'place_name'|'location'
+        --- @param key 'world'
+        --- |'world_name'
+        --- |'room'
+        --- |'room_name'
+        --- |'event'
+        --- |'event_name'
+        --- |'door'
+        --- |'place'
+        --- |'place_name'
+        --- |'location'
         --- @return integer|string|nil
         __index = function (self, key)
             local BASE_ADDRESS = kh2lib.Now
-            local offsets = kh2lib.offsets
+            local offsets = kh2lib._constants._offsets
             local worlds = kh2lib.worlds
             local rooms = kh2lib.rooms
+            local events = kh2lib.events
             local world_id = ReadByte(BASE_ADDRESS + offsets.now.WORLD)
             local room_id = ReadByte(BASE_ADDRESS + offsets.now.ROOM)
+            local event_id = ReadShort(BASE_ADDRESS + offsets.now.EVENT)
 
             -- Game is still in bootup sequence
             -- TODO: Probably handle this differently in the future so that
             -- title screen can actually be detected
-            if world_id == 255 or room_id == 255 then return nil end
+            if world_id == 255 or world_id == 0 or room_id == 255 then return nil end
 
             -- read current area value from game before returning
             if key == 'world' then
@@ -482,6 +508,10 @@ local function add_game_state_table()
                 return room_id
             elseif key == 'room_name' then
                 return rooms[world_id][room_id]
+            elseif key == 'event' then
+                return event_id
+            elseif key == 'event_name' then
+                return events[world_id][room_id][event_id]
             elseif key == 'door' then
                 return ReadShort(BASE_ADDRESS + offsets.now.DOOR)
             elseif key == 'place' then

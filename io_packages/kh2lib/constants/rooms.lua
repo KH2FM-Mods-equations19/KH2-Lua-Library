@@ -1,4 +1,6 @@
-local KH2ValueConstant = require('kh2lib.constants.base_class')
+-- Creates a string reference to the current directory, which is needed for relative imports
+local BASE_PATH = (...):match('(.-)[^%.]+$')
+local KH2ValueConstant = require(BASE_PATH .. 'base_class')
 
 --- Room class containing ID value and human-readable name
 --- @class Room: KH2ValueConstant
@@ -16,18 +18,15 @@ function Room:new(o)
   return o
 end
 
---- @type {[string]: Room[]}
-local rooms = {}
-
 -- ////////
 -- Auto-generated KH2FM room data tables
 -- ////////
-
-rooms.WORLD_OF_DARKNESS = {
+--- @type {[string]: Room[]}
+local rooms = {
+  -- World of Darkness
   Room:new{ id = 0x00, world_id = 0x01, name = 'The Dark Margin' },
   Room:new{ id = 0x01, world_id = 0x01, name = 'Loop Demo' },
-}
-rooms.TWILIGHT_TOWN = {
+  -- Twilight Town
   Room:new{ id = 0x00, world_id = 0x02, name = 'The Empty Realm' },
   Room:new{ id = 0x01, world_id = 0x02, name = "Roxas's Room" },
   Room:new{ id = 0x02, world_id = 0x02, name = 'The Usual Spot' },
@@ -70,13 +69,11 @@ rooms.TWILIGHT_TOWN = {
   Room:new{ id = 0x27, world_id = 0x02, name = 'Tower: Wayward Stairs (Upper Level)' },
   Room:new{ id = 0x28, world_id = 0x02, name = 'Betwixt and Between' },
   Room:new{ id = 0x29, world_id = 0x02, name = 'The Old Mansion (Nobodies Fight)' },
-}
-rooms.DESTINY_ISLANDS = {
+  -- Destiny Islands
   Room:new{ id = 0x00, world_id = 0x03, name = 'Beach' },
   Room:new{ id = 0x01, world_id = 0x03, name = "Main Island: Ocean's Road" },
   Room:new{ id = 0x02, world_id = 0x03, name = 'Main Island: Shore' },
-}
-rooms.HOLLOW_BASTION = {
+  -- Hollow Bastion
   Room:new{ id = 0x00, world_id = 0x04, name = "Villain's Vale" },
   Room:new{ id = 0x01, world_id = 0x04, name = 'The Dark Depths' },
   Room:new{ id = 0x02, world_id = 0x04, name = 'The Great Maw' },
@@ -109,8 +106,7 @@ rooms.HOLLOW_BASTION = {
   Room:new{ id = 0x21, world_id = 0x04, name = 'Station of Remembrance' },
   Room:new{ id = 0x22, world_id = 0x04, name = 'Destiny Islands' },
   Room:new{ id = 0x26, world_id = 0x04, name = 'Station of Oblivion' },
-}
-rooms.BEASTS_CASTLE = {
+  -- Beast's Castle
   Room:new{ id = 0x00, world_id = 0x05, name = 'Entrance Hall' },
   Room:new{ id = 0x01, world_id = 0x05, name = 'Parlor' },
   Room:new{ id = 0x02, world_id = 0x05, name = "Belle's Room" },
@@ -127,8 +123,7 @@ rooms.BEASTS_CASTLE = {
   Room:new{ id = 0x0D, world_id = 0x05, name = 'Bridge (Normal)' },
   Room:new{ id = 0x0E, world_id = 0x05, name = 'Ballroom' },
   Room:new{ id = 0x0F, world_id = 0x05, name = 'Bridge (Xaldin Battle Area)' },
-}
-rooms.OLYMPUS_COLISEUM = {
+  -- Olympus Coliseum
   Room:new{ id = 0x00, world_id = 0x06, name = 'The Coliseum' },
   Room:new{ id = 0x01, world_id = 0x06, name = 'Coliseum Gates (Intact)' },
   Room:new{ id = 0x02, world_id = 0x06, name = 'Coliseum Gates (Destroyed) (Day)' },
@@ -149,8 +144,7 @@ rooms.OLYMPUS_COLISEUM = {
   Room:new{ id = 0x11, world_id = 0x06, name = 'Underworld Caverns: Atrium' },
   Room:new{ id = 0x12, world_id = 0x06, name = 'Coliseum Gates (Hydra)' },
   Room:new{ id = 0x13, world_id = 0x06, name = 'Underdrome (Hades)' },
-}
-rooms.AGRABAH = {
+  -- Agrabah
   Room:new{ id = 0x00, world_id = 0x07, name = 'Agrabah' },
   Room:new{ id = 0x01, world_id = 0x07, name = 'Bazaar' },
   Room:new{ id = 0x02, world_id = 0x07, name = "The Peddler's Shop (1st Visit)" },
@@ -166,8 +160,7 @@ rooms.AGRABAH = {
   Room:new{ id = 0x0D, world_id = 0x07, name = 'The Cave of Wonders: Chasm of Challenges' },
   Room:new{ id = 0x0E, world_id = 0x07, name = 'Sandswept Ruins' },
   Room:new{ id = 0x0F, world_id = 0x07, name = "The Peddler's Shop (2nd Visit)" },
-}
-rooms.THE_LAND_OF_DRAGONS = {
+  -- The Land of Dragons
   Room:new{ id = 0x00, world_id = 0x08, name = 'Bamboo Grove' },
   Room:new{ id = 0x01, world_id = 0x08, name = 'Encampment' },
   Room:new{ id = 0x02, world_id = 0x08, name = 'Checkpoint' },
@@ -181,8 +174,7 @@ rooms.THE_LAND_OF_DRAGONS = {
   Room:new{ id = 0x0A, world_id = 0x08, name = 'Antechamber' },
   Room:new{ id = 0x0B, world_id = 0x08, name = 'Throne Room' },
   Room:new{ id = 0x0C, world_id = 0x08, name = 'Village (Destroyed)' },
-}
-rooms.HUNDRED_ACRE_WOOD = {
+  -- 100 Acre Wood
   Room:new{ id = 0x00, world_id = 0x09, name = 'The Hundred Acre Wood' },
   Room:new{ id = 0x01, world_id = 0x09, name = 'Starry Hill' },
   Room:new{ id = 0x02, world_id = 0x09, name = "Pooh Bear's House" },
@@ -193,8 +185,7 @@ rooms.HUNDRED_ACRE_WOOD = {
   Room:new{ id = 0x07, world_id = 0x09, name = 'The Honey Hunt' },
   Room:new{ id = 0x08, world_id = 0x09, name = 'Blossom Valley' },
   Room:new{ id = 0x09, world_id = 0x09, name = 'The Spooky Cave' },
-}
-rooms.PRIDE_LANDS = {
+  -- Pride Lands
   Room:new{ id = 0x00, world_id = 0x0A, name = 'Pride Rock' },
   Room:new{ id = 0x01, world_id = 0x0A, name = 'Stone Hollow' },
   Room:new{ id = 0x02, world_id = 0x0A, name = "The King's Den" },
@@ -212,8 +203,7 @@ rooms.PRIDE_LANDS = {
   Room:new{ id = 0x0E, world_id = 0x0A, name = "Scar's Darkness" },
   Room:new{ id = 0x0F, world_id = 0x0A, name = 'The Savannah (Groundshaker Battle Area)' },
   Room:new{ id = 0x10, world_id = 0x0A, name = 'Wildebeest Valley (Past)' },
-}
-rooms.ATLANTICA = {
+  -- Atlantica
   Room:new{ id = 0x00, world_id = 0x0B, name = "Triton's Throne" },
   Room:new{ id = 0x01, world_id = 0x0B, name = "Ariel's Grotto" },
   Room:new{ id = 0x02, world_id = 0x0B, name = 'Undersea Courtyard (Day)' },
@@ -225,8 +215,7 @@ rooms.ATLANTICA = {
   Room:new{ id = 0x08, world_id = 0x0B, name = 'The Shore (Dawn)' },
   Room:new{ id = 0x09, world_id = 0x0B, name = 'Wrath of the Sea' },
   Room:new{ id = 0x0A, world_id = 0x0B, name = 'Wedding Ship' },
-}
-rooms.DISNEY_CASTLE = {
+  -- Disney Castle
   Room:new{ id = 0x00, world_id = 0x0C, name = 'Audience Chamber' },
   Room:new{ id = 0x01, world_id = 0x0C, name = 'Library' },
   Room:new{ id = 0x02, world_id = 0x0C, name = 'Colonnade' },
@@ -235,8 +224,7 @@ rooms.DISNEY_CASTLE = {
   Room:new{ id = 0x05, world_id = 0x0C, name = 'The Hall of the Cornerstone (Light)' },
   Room:new{ id = 0x06, world_id = 0x0C, name = 'Gummi Hangar' },
   Room:new{ id = 0x07, world_id = 0x0C, name = 'Gathering Place' },
-}
-rooms.TIMELESS_RIVER = {
+  -- Timeless River
   Room:new{ id = 0x00, world_id = 0x0D, name = 'Cornerstone Hill' },
   Room:new{ id = 0x01, world_id = 0x0D, name = 'Pier' },
   Room:new{ id = 0x02, world_id = 0x0D, name = 'Waterway' },
@@ -246,8 +234,7 @@ rooms.TIMELESS_RIVER = {
   Room:new{ id = 0x06, world_id = 0x0D, name = 'Scene of the Fire' },
   Room:new{ id = 0x07, world_id = 0x0D, name = "Mickey's House" },
   Room:new{ id = 0x08, world_id = 0x0D, name = "Villain's Vale (Monochrome)" },
-}
-rooms.HALLOWEEN_TOWN = {
+  -- Halloween Town
   Room:new{ id = 0x00, world_id = 0x0E, name = 'Halloween Town Square' },
   Room:new{ id = 0x01, world_id = 0x0E, name = "Dr. Finkelstein's Lab" },
   Room:new{ id = 0x02, world_id = 0x0E, name = 'Graveyard' },
@@ -259,8 +246,7 @@ rooms.HALLOWEEN_TOWN = {
   Room:new{ id = 0x08, world_id = 0x0E, name = "Santa's House" },
   Room:new{ id = 0x09, world_id = 0x0E, name = 'Toy Factory: Shipping and Receiving' },
   Room:new{ id = 0x0A, world_id = 0x0E, name = 'Toy Factory: The Wrapping Room' },
-}
-rooms.PORT_ROYAL = {
+  -- Port Royal
   Room:new{ id = 0x00, world_id = 0x10, name = 'Rampart' },
   Room:new{ id = 0x01, world_id = 0x10, name = 'Harbor' },
   Room:new{ id = 0x02, world_id = 0x10, name = 'Town' },
@@ -287,8 +273,7 @@ rooms.PORT_ROYAL = {
   Room:new{ id = 0x17, world_id = 0x10, name = "The Black Pearl: Captain's Stateroom" },
   Room:new{ id = 0x18, world_id = 0x10, name = 'Harbor' },
   Room:new{ id = 0x19, world_id = 0x10, name = 'Isla de Muerta: Rock Face (1st Visit with The Black Pearl)' },
-}
-rooms.SPACE_PARANOIDS = {
+  -- Space Paranoids
   Room:new{ id = 0x00, world_id = 0x11, name = 'Pit Cell' },
   Room:new{ id = 0x01, world_id = 0x11, name = 'Canyon' },
   Room:new{ id = 0x02, world_id = 0x11, name = 'Game Grid' },
@@ -301,8 +286,7 @@ rooms.SPACE_PARANOIDS = {
   Room:new{ id = 0x09, world_id = 0x11, name = 'Central Computer Core' },
   Room:new{ id = 0x0A, world_id = 0x11, name = 'Solar Sailor Simulation (from I/O Tower)' },
   Room:new{ id = 0x0B, world_id = 0x11, name = 'Solar Sailor Simulation (from Central Computer)' },
-}
-rooms.THE_WORLD_THAT_NEVER_WAS = {
+  -- The World That Never Was
   Room:new{ id = 0x00, world_id = 0x12, name = 'Where Nothing Gathers' },
   Room:new{ id = 0x01, world_id = 0x12, name = 'Alley to Between' },
   Room:new{ id = 0x02, world_id = 0x12, name = 'Fragment Crossing' },

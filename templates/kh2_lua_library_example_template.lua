@@ -1,4 +1,5 @@
-LUA_NAME = 'LuaLibrary'
+LUA_NAME = '' -- Your mod's name
+
 local kh2lib_status, kh2lib, can_execute
 
 function _OnInit()
@@ -9,17 +10,22 @@ function _OnInit()
         return
     end
 
+    Log('My Script 1.0.0')
+    RequireKH2LibraryVersion(1)
+    -- RequirePCGameVersion()
+
     can_execute = kh2lib.CanExecute
     if not can_execute then
         return
     end
 
-    Log('#####################################################')
-    Log('# KH2 Lua Library, version ' .. KH2_LIBRARY_DISPLAY_VERSION)
-    Log('# Using addresses for ' .. kh2lib.GameVersionString)
-    Log('#####################################################')
+    -- (your code here)
 end
 
 function _OnFrame()
+    if not can_execute then
+        return
+    end
 
+    -- (your code here)
 end

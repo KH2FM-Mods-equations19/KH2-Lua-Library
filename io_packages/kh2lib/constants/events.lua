@@ -1,4 +1,6 @@
-local KH2ValueConstant = require('kh2lib.constants.base_class')
+-- Creates a string reference to the current directory, which is needed for relative imports
+local BASE_PATH = (...):match('(.-)[^%.]+$')
+local KH2ValueConstant = require(BASE_PATH .. 'base_class')
 
 --- Event class containing ID values and human-readable name
 --- @class Event:KH2ValueConstant
@@ -9,7 +11,7 @@ local KH2ValueConstant = require('kh2lib.constants.base_class')
 --- @field battle_id? integer # 2-byte battle ID (from game)
 --- @field map_id? integer # 2-byte map ID (from game)
 --- @field door_id? integer # 2-byte door ID (from game)
-local Event = KH2ValueConstant:new()
+local Event = KH2ValueConstant:new{ id = -1, room_id = -1, world_id = -1, name = 'UNKNOWN_EVENT' }
 
 --- @param o { id: integer, room_id: integer, world_id: integer, name: string, battle_id?: integer, map_id?: integer, door_id?: integer } # options table
 --- @return Event # newly instantiated Event
@@ -20,14 +22,12 @@ function Event:new(o)
   return o
 end
 
---- @type {[string]: Event[]}
-local events = {}
-
 -- ////////
 -- Auto-generated KH2FM event data tables (with some manual entries)
 -- ////////
-
-events.WORLD_OF_DARKNESS = {
+--- @type {[string]: Event[]}
+local events = {
+  -- World of Darkness
   Event:new{ id = 0x0033, battle_id = 0x0033, map_id = 0x0033, room_id = 0x00, world_id = 0x01, name = 'The Letter' },
   Event:new{ id = 0x0039, battle_id = 0x0039, map_id = 0x0039, room_id = 0x00, world_id = 0x01, name = 'The Dark Margin' },
   Event:new{ id = 0x003A, battle_id = 0x003A, map_id = 0x003A, room_id = 0x00, world_id = 0x01, name = 'FMV Ending & Credits' },
@@ -39,8 +39,7 @@ events.WORLD_OF_DARKNESS = {
   Event:new{ id = 0x0043, battle_id = 0x0043, map_id = 0x0043, room_id = 0x00, world_id = 0x01, name = 'The Letter (Theater Mode - English)' },
   Event:new{ id = 0x0044, battle_id = 0x0044, map_id = 0x0044, room_id = 0x00, world_id = 0x01, name = 'The Letter (Theater Mode - Japanese)' },
   Event:new{ id = 0x0038, battle_id = 0x0038, map_id = 0x0038, room_id = 0x01, world_id = 0x01, name = 'Menu Trailer' },
-}
-events.TWILIGHT_TOWN = {
+  -- Twilight Town
   Event:new{ id = 0x0033, battle_id = 0x0033, map_id = 0x0033, room_id = 0x00, world_id = 0x02, name = 'Her Name is Naminé' },
   Event:new{ id = 0x0034, battle_id = 0x0034, map_id = 0x0034, room_id = 0x01, world_id = 0x02, name = 'Dreams Connected' },
   Event:new{ id = 0x0035, battle_id = 0x0035, map_id = 0x0035, room_id = 0x01, world_id = 0x02, name = 'The Dream Is the Key' },
@@ -281,14 +280,12 @@ events.TWILIGHT_TOWN = {
   Event:new{ id = 0x016E, battle_id = 0x016E, map_id = 0x016E, room_id = 0x28, world_id = 0x02, name = "Axel's Atonement (Theater Mode)" },
   Event:new{ id = 0x016F, battle_id = 0x016F, map_id = 0x016F, room_id = 0x28, world_id = 0x02, name = 'His Last Words (Theater Mode)' },
   Event:new{ id = 0x00BA, battle_id = 0x00BA, map_id = 0x00BA, room_id = 0x29, world_id = 0x02, name = 'Nobody Waves Battle (With Mickey)' },
-}
-events.DESTINY_ISLANDS = {
+  -- Destiny Islands
   Event:new{ id = 0x0033, battle_id = 0x0033, map_id = 0x0033, room_id = 0x01, world_id = 0x03, name = 'Kairi and Selphie' },
   Event:new{ id = 0x0034, battle_id = 0x0034, map_id = 0x0034, room_id = 0x01, world_id = 0x03, name = 'Kairi Running' },
   Event:new{ id = 0x0035, battle_id = 0x0035, map_id = 0x0035, room_id = 0x02, world_id = 0x03, name = 'The Letter to the Boy' },
   Event:new{ id = 0x0036, battle_id = 0x0036, map_id = 0x0036, room_id = 0x02, world_id = 0x03, name = 'Axel Approaches Kairi' },
-}
-events.HOLLOW_BASTION = {
+  -- Hollow Bastion
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x00, world_id = 0x04, name = 'Pete Enters the Castle' },
   Event:new{ id = 0x0002, battle_id = 0x0002, map_id = 0x0002, room_id = 0x00, world_id = 0x04, name = "Maleficent's Return" },
 
@@ -453,8 +450,7 @@ events.HOLLOW_BASTION = {
   Event:new{ id = 0x0089, battle_id = 0x0089, map_id = 0x0089, room_id = 0x26, world_id = 0x04, name = 'Data Marluxia Disappears' },
   Event:new{ id = 0x0091, battle_id = 0x0091, map_id = 0x0091, room_id = 0x26, world_id = 0x04, name = 'Marluxia Battle (Absent Silhouette)' },
   Event:new{ id = 0x0096, battle_id = 0x0096, map_id = 0x0096, room_id = 0x26, world_id = 0x04, name = 'Marluxia Battle (Data)' },
-}
-events.BEASTS_CASTLE = {
+  -- Beast's Castle
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x00, world_id = 0x05, name = 'The Voice That Echoes' },
   Event:new{ id = 0x0002, battle_id = 0x0002, map_id = 0x0002, room_id = 0x00, world_id = 0x05, name = 'Find Belle' },
   Event:new{ id = 0x0003, battle_id = 0x0003, map_id = 0x0003, room_id = 0x00, world_id = 0x05, name = 'Damsel in Distress' },
@@ -505,8 +501,7 @@ events.BEASTS_CASTLE = {
   Event:new{ id = 0x0062, battle_id = 0x0062, map_id = 0x0062, room_id = 0x0F, world_id = 0x05, name = 'Data Xaldin Appears' },
   Event:new{ id = 0x0063, battle_id = 0x0063, map_id = 0x0063, room_id = 0x0F, world_id = 0x05, name = 'Data Xaldin Disappears' },
   Event:new{ id = 0x007F, battle_id = 0x007F, map_id = 0x007F, room_id = 0x0F, world_id = 0x05, name = "Xaldin's Demise" },
-}
-events.OLYMPUS_COLISEUM = {
+  -- Olympus Coliseum
   -- TODO: Manual entry, needs testing that event, battle, and map IDs match
   Event:new{ id = 0x0016, battle_id = 0x0002, map_id = 0x0000, room_id = 0x00, world_id = 0x06, name = "Phil's Training" },
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x00, world_id = 0x06, name = 'Hercules the Hero' },
@@ -597,8 +592,7 @@ events.OLYMPUS_COLISEUM = {
   Event:new{ id = 0x00F3, battle_id = 0x00F3, map_id = 0x00F3, room_id = 0x12, world_id = 0x06, name = 'Spoils of Battle' },
   Event:new{ id = 0x00C9, battle_id = 0x00C9, map_id = 0x00C9, room_id = 0x13, world_id = 0x06, name = 'Hades Battle (Part I)' },
   Event:new{ id = 0x00CA, battle_id = 0x00CA, map_id = 0x00CA, room_id = 0x13, world_id = 0x06, name = 'Hades Battle (Part II)' },
-}
-events.AGRABAH = {
+  -- Agrabah
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x00, world_id = 0x07, name = "Iago's Melancholy" },
   Event:new{ id = 0x0002, battle_id = 0x0002, map_id = 0x0002, room_id = 0x00, world_id = 0x07, name = 'Lamp-thief?' },
   Event:new{ id = 0x0003, battle_id = 0x0003, map_id = 0x0003, room_id = 0x00, world_id = 0x07, name = 'Aladdin and Abu' },
@@ -657,8 +651,7 @@ events.AGRABAH = {
   Event:new{ id = 0x000A, battle_id = 0x000A, map_id = 0x000A, room_id = 0x0F, world_id = 0x07, name = "Jafar's Coming" },
   Event:new{ id = 0x0085, battle_id = 0x0085, map_id = 0x0085, room_id = 0x0F, world_id = 0x07, name = 'Suspicious Shopkeeper' },
   Event:new{ id = 0x0087, battle_id = 0x0087, map_id = 0x0087, room_id = 0x0F, world_id = 0x07, name = 'To the Desert Ruins' },
-}
-events.THE_LAND_OF_DRAGONS = {
+  -- The Land of Dragons
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x00, world_id = 0x08, name = "Shan Yu's Ambition" },
   Event:new{ id = 0x0002, battle_id = 0x0002, map_id = 0x0002, room_id = 0x00, world_id = 0x08, name = 'Mushu, an Old Pal' },
 
@@ -717,8 +710,7 @@ events.THE_LAND_OF_DRAGONS = {
   Event:new{ id = 0x0040, battle_id = 0x0040, map_id = 0x0040, room_id = 0x0B, world_id = 0x08, name = "Captain Shang's Been Defeated" },
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x0C, world_id = 0x08, name = 'Annihilated Army' },
   Event:new{ id = 0x000A, battle_id = 0x000A, map_id = 0x000A, room_id = 0x0C, world_id = 0x08, name = 'The Village With No-One In It' },
-}
-events.HUNDRED_ACRE_WOOD = {
+  -- 100 Acre Wood
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x00, world_id = 0x09, name = 'The 100 Acre Wood' },
   Event:new{ id = 0x0002, battle_id = 0x0002, map_id = 0x0002, room_id = 0x00, world_id = 0x09, name = 'To the Forest Once More' },
   Event:new{ id = 0x0003, battle_id = 0x0003, map_id = 0x0003, room_id = 0x00, world_id = 0x09, name = "Piglet's House" },
@@ -759,8 +751,7 @@ events.HUNDRED_ACRE_WOOD = {
   Event:new{ id = 0x0003, battle_id = 0x0003, map_id = 0x0003, room_id = 0x09, world_id = 0x09, name = 'We Were Worried' },
   Event:new{ id = 0x003D, battle_id = 0x003D, map_id = 0x003D, room_id = 0x09, world_id = 0x09, name = 'The Expotition (With Time Limit)' },
   Event:new{ id = 0x0048, battle_id = 0x0048, map_id = 0x0048, room_id = 0x09, world_id = 0x09, name = 'The Expotition (Without Time Limit)' },
-}
-events.PRIDE_LANDS = {
+  -- Pride Lands
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x00, world_id = 0x0A, name = "Rafiki's Verdict" },
   Event:new{ id = 0x0002, battle_id = 0x0002, map_id = 0x0002, room_id = 0x00, world_id = 0x0A, name = 'His Majesty, Scar' },
   Event:new{ id = 0x0003, battle_id = 0x0003, map_id = 0x0003, room_id = 0x00, world_id = 0x0A, name = "The Wind's Tidings" },
@@ -803,8 +794,7 @@ events.PRIDE_LANDS = {
   Event:new{ id = 0x003B, battle_id = 0x003B, map_id = 0x003B, room_id = 0x0F, world_id = 0x0A, name = 'Groundshaker Battle' },
   Event:new{ id = 0x0063, battle_id = 0x0063, map_id = 0x0063, room_id = 0x0F, world_id = 0x0A, name = "The Giant's Fall" },
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x10, world_id = 0x0A, name = 'The Tragedy' },
-}
-events.ATLANTICA = {
+  -- Atlantica
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x00, world_id = 0x0B, name = 'Blowing Off the Anxiety' },
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x01, world_id = 0x0B, name = "The Prince's Bronze Statue" },
   Event:new{ id = 0x0002, battle_id = 0x0002, map_id = 0x0002, room_id = 0x01, world_id = 0x0B, name = 'Chapter 4 Prologue' },
@@ -851,8 +841,7 @@ events.ATLANTICA = {
   Event:new{ id = 0x0045, battle_id = 0x0045, map_id = 0x0045, room_id = 0x09, world_id = 0x0B, name = "Song 4: Ursula's Revenge (Not Story-Related)" },
   Event:new{ id = 0x0061, battle_id = 0x0061, map_id = 0x0061, room_id = 0x09, world_id = 0x0B, name = "Song 4: Ursula's Revenge (Theater Mode)" },
   Event:new{ id = 0x0062, battle_id = 0x0062, map_id = 0x0062, room_id = 0x09, world_id = 0x0B, name = 'Ursula Disappeared Into the Sea' },
-}
-events.DISNEY_CASTLE = {
+  -- Disney Castle
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x00, world_id = 0x0C, name = 'There Are Heartless Here Too?' },
   Event:new{ id = 0x0033, battle_id = 0x0033, map_id = 0x0033, room_id = 0x00, world_id = 0x0C, name = 'Guide Minnie to the Throne' },
   Event:new{ id = 0x0051, battle_id = 0x0051, map_id = 0x0051, room_id = 0x00, world_id = 0x0C, name = 'The Hidden Entrance' },
@@ -878,8 +867,7 @@ events.DISNEY_CASTLE = {
   Event:new{ id = 0x0046, battle_id = 0x0046, map_id = 0x0046, room_id = 0x07, world_id = 0x0C, name = 'Rematch With Terra' },
   Event:new{ id = 0x0047, battle_id = 0x0047, map_id = 0x0047, room_id = 0x07, world_id = 0x0C, name = 'Victory on the Wastelands' },
   Event:new{ id = 0x0049, battle_id = 0x0049, map_id = 0x0049, room_id = 0x07, world_id = 0x0C, name = 'Lingering Will Battle (Rematch)' },
-}
-events.TIMELESS_RIVER = {
+  -- Timeless River
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x00, world_id = 0x0D, name = 'The World of Black and White' },
   Event:new{ id = 0x0002, battle_id = 0x0002, map_id = 0x0002, room_id = 0x00, world_id = 0x0D, name = 'The Appearing Window' },
   Event:new{ id = 0x0003, battle_id = 0x0003, map_id = 0x0003, room_id = 0x00, world_id = 0x0D, name = 'Deepening Mystery' },
@@ -915,8 +903,7 @@ events.TIMELESS_RIVER = {
   Event:new{ id = 0x0002, battle_id = 0x0002, map_id = 0x0002, room_id = 0x08, world_id = 0x0D, name = 'Time Window: The Good Old Days' },
   Event:new{ id = 0x0003, battle_id = 0x0003, map_id = 0x0003, room_id = 0x08, world_id = 0x0D, name = 'Time Window: Door to the Past' },
   Event:new{ id = 0x0004, battle_id = 0x0004, map_id = 0x0004, room_id = 0x08, world_id = 0x0D, name = 'Time Window: The Culprit Appears' },
-}
-events.HALLOWEEN_TOWN = {
+  -- Halloween Town
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x00, world_id = 0x0E, name = 'Merry Christmas' },
   Event:new{ id = 0x0002, battle_id = 0x0002, map_id = 0x0002, room_id = 0x00, world_id = 0x0E, name = "The Mayor's Decree" },
   Event:new{ id = 0x0003, battle_id = 0x0003, map_id = 0x0003, room_id = 0x00, world_id = 0x0E, name = 'Advance Departure!' },
@@ -966,8 +953,7 @@ events.HALLOWEEN_TOWN = {
   Event:new{ id = 0x003E, battle_id = 0x003E, map_id = 0x003E, room_id = 0x0A, world_id = 0x0E, name = 'Trap Lock, Shock, & Barrel in Presents' },
   Event:new{ id = 0x003F, battle_id = 0x003F, map_id = 0x003F, room_id = 0x0A, world_id = 0x0E, name = 'Gift Wrapping (Wrap 100 Presents)' },
   Event:new{ id = 0x0048, battle_id = 0x0048, map_id = 0x0048, room_id = 0x0A, world_id = 0x0E, name = 'Gift Wrapping (Wrap Over 150 Presents)' },
-}
-events.PORT_ROYAL = {
+  -- Port Royal
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x00, world_id = 0x10, name = 'The View From High Ground' },
   Event:new{ id = 0x000A, battle_id = 0x000A, map_id = 0x000A, room_id = 0x00, world_id = 0x10, name = 'Port Royal Once More' },
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x01, world_id = 0x10, name = 'The Undead Pirates' },
@@ -1028,8 +1014,7 @@ events.PORT_ROYAL = {
   Event:new{ id = 0x0052, battle_id = 0x0052, map_id = 0x0052, room_id = 0x18, world_id = 0x10, name = 'Showdown With the Grim Reaper' },
   Event:new{ id = 0x0054, battle_id = 0x0054, map_id = 0x0054, room_id = 0x18, world_id = 0x10, name = 'The Legendary Pirate, Jack Sparrow' },
   Event:new{ id = 0x0053, battle_id = 0x0053, map_id = 0x0053, room_id = 0x19, world_id = 0x10, name = 'The Plan to Rescue Elizabeth' },
-}
-events.SPACE_PARANOIDS = {
+  -- Space Paranoids
   Event:new{ id = 0x0001, battle_id = 0x0001, map_id = 0x0001, room_id = 0x00, world_id = 0x11, name = 'Security Program, Tron' },
   -- TODO: Manual entry, needs testing that event, battle, and map IDs match
   Event:new{ id = 0x0002, battle_id = 0x0000, map_id = 0x0001, room_id = 0x00, world_id = 0x11, name = "The MCP's Aim" },
@@ -1073,8 +1058,7 @@ events.SPACE_PARANOIDS = {
   Event:new{ id = 0x006A, battle_id = 0x006A, map_id = 0x006A, room_id = 0x09, world_id = 0x11, name = "All of the Function's Will." },
   Event:new{ id = 0x006B, battle_id = 0x006B, map_id = 0x006B, room_id = 0x09, world_id = 0x11, name = "The MCP's Breakdown" },
   Event:new{ id = 0x000A, battle_id = 0x000A, map_id = 0x000A, room_id = 0x0A, world_id = 0x11, name = "The Solar Sailer's Departure" },
-}
-events.THE_WORLD_THAT_NEVER_WAS = {
+  -- The World That Never Was
   Event:new{ id = 0x0033, battle_id = 0x0033, map_id = 0x0033, room_id = 0x00, world_id = 0x12, name = 'Number 13: Roxas' },
   Event:new{ id = 0x0073, battle_id = 0x0073, map_id = 0x0073, room_id = 0x00, world_id = 0x12, name = 'Taking Care of the Rat' },
   Event:new{ id = 0x0074, battle_id = 0x0074, map_id = 0x0074, room_id = 0x00, world_id = 0x12, name = "The Keyblade's Hero" },
