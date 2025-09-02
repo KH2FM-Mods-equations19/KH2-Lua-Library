@@ -1,7 +1,8 @@
 function _OnInit()
     kh2libstatus, kh2lib = pcall(require, "kh2lib")
     if not kh2libstatus then
-        print("ERROR: KH2-Lua-Library mod is not installed")
+        ConsolePrint("KH2-Lua-Library mod is not installed or failed to initialize", 3)
+        ConsolePrint(kh2lib, 3)
         CanExecute = false
         return
     end

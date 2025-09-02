@@ -119,4 +119,5 @@ The library provides some other common functions that can be used by scripts. Th
   - Reads and returns a pointer value at a specified address, using the proper size per platform.
 - `Log`
   - Logs a message to the console, using an appropriate print call per platform.
-  - There are `LogWarning` and `LogError` variants that can use color to draw extra attention to the message.
+  - There are `LogMessage`, `LogSuccess`, `LogWarning`, and `LogError` variants that can use color to draw extra
+    attention to the message.

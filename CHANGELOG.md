@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1
+
+- Fix error messages not printing properly
+- Fix version detection for Steam JP (hopefully)
+- Fix library detection script for emulator
+
 ## 2.0.0
 
 - Adds support for updated game versions. New supported versions:

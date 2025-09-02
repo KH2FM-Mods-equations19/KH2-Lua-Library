@@ -41,5 +41,5 @@ please consider contributing them to the library.
 - TopazTK and Sirius902 for their work on LuaBackend (https://github.com/Sirius902/LuaBackend)
 - Sonicshadowsilver2 and Num for addresses taken from the Garden of Assemblage mod
   (https://github.com/KH2FM-Mods-Num/GoA-ROM-Edition)
-- Denhonator and contributors for addresses taken from various scripts at
+- Deathofall84, Denhonator and contributors for addresses taken from various scripts at
   (https://github.com/Denhonator/KHPCSpeedrunTools)

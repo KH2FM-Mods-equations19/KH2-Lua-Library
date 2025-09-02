@@ -1,4 +1,4 @@
-title: KH2 Lua Library (2.0.0)
+title: KH2 Lua Library (2.1)
 originalAuthor: aliosgaming/equations19
 description: Lua scripts designed to be included by other Lua-based KH2 mods.
 assets:
@@ -30,7 +30,7 @@ assets:
   method: copy
   source:
   - name: io_packages/kh2lib/SteamShared-1_0_0_10.lua
-- name: scripts/00-LuaLibrary.lua
+- name: scripts/F266B00B LuaLibrary.lua
   method: copy
   source:
   - name: LuaLibrary.lua
